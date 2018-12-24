@@ -838,7 +838,7 @@ static VOID DrawText(IN CHAR16 *Text, IN BOOLEAN Selected, IN UINTN FieldWidth, 
 
    // render the text
    egRenderText(Text, TextBuffer, egGetFontCellWidth(), TEXT_YMARGIN, (Bg.r + Bg.g + Bg.b) / 3);
-   egDrawImageWithTransparency(TextBuffer, NULL, XPos, YPos, TextBuffer->Width, TextBuffer->Height);
+   egDrawImageWithTransparency(TextBuffer, NULL, NULL, XPos, YPos, TextBuffer->Width, TextBuffer->Height);
 //    BltImage(TextBuffer, XPos, YPos);
 }
 
@@ -885,7 +885,7 @@ static VOID DrawTextWithTransparency(IN CHAR16 *Text, IN UINTN XPos, IN UINTN YP
 
     // render the text
     egRenderText(Text, TextBuffer, 0, 0, AverageBrightness(TextBuffer));
-    egDrawImageWithTransparency(TextBuffer, NULL, XPos, YPos, TextBuffer->Width, TextBuffer->Height);
+    egDrawImageWithTransparency(TextBuffer, NULL, NULL, XPos, YPos, TextBuffer->Width, TextBuffer->Height);
     egFreeImage(TextBuffer);
 }
 
@@ -1052,9 +1052,10 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, UINTN X
       Background = egCropImage(GlobalConfig.ScreenBackground, XPos, YPos,
                                SelectionImages[Entry->Row]->Width, SelectionImages[Entry->Row]->Height);
       egComposeImage(Background, SelectionImages[Entry->Row], 0, 0);
-      BltImageCompositeBadge(Background, Entry->Image, Entry->BadgeImage, XPos, YPos);
+      BltImageCompositeBadgeIdenticon(Background, Entry->Image, Entry->BadgeImage, Entry->IdenticonImage,
+				      XPos, YPos);
    } else { // Image not selected; copy background
-      egDrawImageWithTransparency(Entry->Image, Entry->BadgeImage, XPos, YPos,
+      egDrawImageWithTransparency(Entry->Image, Entry->BadgeImage, Entry->IdenticonImage, XPos, YPos,
                                   SelectionImages[Entry->Row]->Width, SelectionImages[Entry->Row]->Height);
    } // if/else
 } // VOID DrawMainMenuEntry()
@@ -1143,7 +1144,7 @@ static VOID PaintIcon(IN EG_EMBEDDED_IMAGE *BuiltInIcon, IN CHAR16 *ExternalFile
    if (Icon != NULL) {
       if (Alignment == ALIGN_RIGHT)
          PosX -= Icon->Width;
-      egDrawImageWithTransparency(Icon, NULL, PosX, PosY - (Icon->Height / 2), Icon->Width, Icon->Height);
+      egDrawImageWithTransparency(Icon, NULL, NULL, PosX, PosY - (Icon->Height / 2), Icon->Width, Icon->Height);
    }
 } // static VOID ()
 

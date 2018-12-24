@@ -414,12 +414,12 @@ VOID egDrawImage(IN EG_IMAGE *Image, IN UINTN ScreenPosX, IN UINTN ScreenPosY)
 // Display an unselected icon on the screen, so that the background image shows
 // through the transparency areas. The BadgeImage may be NULL, in which case
 // it's not composited in.
-VOID egDrawImageWithTransparency(EG_IMAGE *Image, EG_IMAGE *BadgeImage, UINTN XPos, UINTN YPos, UINTN Width, UINTN Height) {
+VOID egDrawImageWithTransparency(EG_IMAGE *Image, EG_IMAGE *BadgeImage, EG_IMAGE *IdenticonImage, UINTN XPos, UINTN YPos, UINTN Width, UINTN Height) {
    EG_IMAGE *Background;
 
    Background = egCropImage(GlobalConfig.ScreenBackground, XPos, YPos, Width, Height);
    if (Background != NULL) {
-      BltImageCompositeBadge(Background, Image, BadgeImage, XPos, YPos);
+      BltImageCompositeBadgeIdenticon(Background, Image, BadgeImage, IdenticonImage, XPos, YPos);
       egFreeImage(Background);
    }
 } // VOID DrawImageWithTransparency()

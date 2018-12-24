@@ -684,6 +684,7 @@ VOID ReadConfig(CHAR16 *FileName)
            if (i >= 32) {
               GlobalConfig.IconSizes[ICON_SIZE_BIG] = i;
               GlobalConfig.IconSizes[ICON_SIZE_BADGE] = i / 4;
+              GlobalConfig.IconSizes[ICON_SIZE_IDENTICON] = i / 4;
               HaveResized = TRUE;
            }
 
@@ -922,7 +923,7 @@ static LOADER_ENTRY * AddStanzaEntries(REFIT_FILE *File, REFIT_VOLUME *Volume, C
          } // if match found
 
       } else if (MyStriCmp(TokenList[0], L"icon") && (TokenCount > 1)) {
-         MyFreePool(Entry->me.Image);
+	 MyFreePool(Entry->me.Image); //FIXME: tim e. shouldn't this be egFreeImage ?
          Entry->me.Image = egLoadIcon(CurrentVolume->RootDir, TokenList[1], GlobalConfig.IconSizes[ICON_SIZE_BIG]);
          if (Entry->me.Image == NULL) {
             Entry->me.Image = DummyImage(GlobalConfig.IconSizes[ICON_SIZE_BIG]);
@@ -974,7 +975,7 @@ static LOADER_ENTRY * AddStanzaEntries(REFIT_FILE *File, REFIT_VOLUME *Volume, C
    return(Entry);
 } // static VOID AddStanzaEntries()
 
-static unsigned char *fooHack = "73cb3858a687a8494ca332305301628x";
+static unsigned char *fooHack = (unsigned char *)"73cb3858a687a8494ca332305301628x";
 
 static unsigned char counter = 'a';
 
@@ -983,8 +984,11 @@ VOID GenerateHash(LOADER_ENTRY *Entry)
   //TODO FIXME
   //if(HashFilesCount != 0) {
     MyFreePool(Entry->Hash);
-    Entry->Hash = StrDuplicate(fooHack);
+    Entry->Hash = AllocateZeroPool(32 * sizeof(unsigned char));
+    if(Entry->Hash != NULL)
+      CopyMem(Entry->Hash, fooHack, 32 * sizeof(unsigned char));
     Entry->Hash[0] = counter++;
+    Entry->HashLength = 32;
       //}
     
 }
@@ -994,12 +998,11 @@ VOID GenerateIdenticons(LOADER_ENTRY *Entry)
   if(Entry->Hash == NULL)
     return;
   
-  MyFreePool(Entry->me.IdenticonImage);
-  Entry->me.Image = egDrawIdenticon(Entry->Hash,GlobalConfig.IconSizes[ICON_SIZE_BIG]);
+  egFreeImage(Entry->me.IdenticonImage);
+  Entry->me.Image = egDrawIdenticon(GlobalConfig.IconSizes[ICON_SIZE_BIG],Entry->HashLength,Entry->Hash);
   if (Entry->me.Image == NULL) {
     Entry->me.Image = DummyImage(GlobalConfig.IconSizes[ICON_SIZE_BIG]);
   }
-  Entry->me.Image = egLoadIcon(CurrentVolume->RootDir, TokenList[1], GlobalConfig.IconSizes[ICON_SIZE_BIG]);
 }
 
 // Read the user-configured menu entries from refind.conf and add or delete

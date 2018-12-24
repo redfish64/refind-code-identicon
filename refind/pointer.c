@@ -279,7 +279,7 @@ VOID pdDraw() {
 
         Background = egCopyScreenArea(State.X, State.Y, Width, Height);
         if(Background) {
-            BltImageCompositeBadge(Background, MouseImage, NULL, State.X, State.Y);
+	    BltImageCompositeBadgeIdenticon(Background, MouseImage, NULL, NULL,State.X, State.Y);
         }
     }
     LastXPos = State.X;

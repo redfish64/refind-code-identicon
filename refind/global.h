@@ -152,6 +152,7 @@
 #define ICON_SIZE_SMALL 1
 #define ICON_SIZE_BIG   2
 #define ICON_SIZE_MOUSE 3
+#define ICON_SIZE_IDENTICON 4
 
 // Minimum horizontal resolution for a screen to be consider high-DPI
 #define HIDPI_MIN 1921
@@ -308,6 +309,7 @@ typedef struct {
    CHAR16           **HashFiles; //files to be hashed as a list of strings. Supports globs (ie. /x/*txt)
    UINTN            HashFilesCount;
    CHAR8            *Hash;  //hash of files to be hashed, null terminated. NULL if hashing not enabled.
+   UINTN            HashLength;  
 } LOADER_ENTRY;
 
 typedef struct {
@@ -342,7 +344,7 @@ typedef struct {
    UINTN            ScanDelay;
    UINTN            ScreensaverTime;
    UINTN            MouseSpeed;
-   UINTN            IconSizes[4];
+   UINTN            IconSizes[5];
    UINTN            BannerScale;
    REFIT_VOLUME     *DiscoveredRoot;
    EFI_DEVICE_PATH  *SelfDevicePath;

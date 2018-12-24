@@ -184,6 +184,7 @@ VOID SetupScreen(VOID)
             GlobalConfig.IconSizes[ICON_SIZE_SMALL] *= 2;
             GlobalConfig.IconSizes[ICON_SIZE_BIG] *= 2;
             GlobalConfig.IconSizes[ICON_SIZE_MOUSE] *= 2;
+            GlobalConfig.IconSizes[ICON_SIZE_IDENTICON] *= 2;
             HaveResized = TRUE;
         } // if
         SwitchToGraphics();
@@ -560,7 +561,7 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN UINTN XPos, IN UINTN YPos, IN EG_PIXEL
 //     GraphicsScreenDirty = TRUE;
 // }
 
-VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN UINTN XPos, IN UINTN YPos)
+VOID BltImageCompositeBadgeIdenticon(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN EG_IMAGE *IdenticonImage, IN UINTN XPos, IN UINTN YPos)
 {
      UINTN TotalWidth = 0, TotalHeight = 0, CompWidth = 0, CompHeight = 0, OffsetX = 0, OffsetY = 0;
      EG_IMAGE *CompImage = NULL;
@@ -587,15 +588,22 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
 
      // place the badge image
      if (BadgeImage != NULL && CompImage != NULL && (BadgeImage->Width + 8) < CompWidth && (BadgeImage->Height + 8) < CompHeight) {
-         OffsetX += CompWidth  - 8 - BadgeImage->Width;
-         OffsetY += CompHeight - 8 - BadgeImage->Height;
-         egComposeImage(CompImage, BadgeImage, OffsetX, OffsetY);
+       UINTN BadgeOffsetX = OffsetX + CompWidth  - 8 - BadgeImage->Width;
+       UINTN BadgeOffsetY = OffsetY + CompWidth  - 8 - BadgeImage->Width;
+       egComposeImage(CompImage, BadgeImage, BadgeOffsetX, BadgeOffsetY);
+     }
+
+     // place the identicon image
+     if (IdenticonImage != NULL && CompImage != NULL && (IdenticonImage->Width + 8) < CompWidth && (IdenticonImage->Height + 8) < CompHeight) {
+       UINTN IdOffsetX = OffsetX + CompWidth  - 8 - BadgeImage->Width;
+       UINTN IdOffsetY = OffsetY + 8;
+       egComposeImage(CompImage, IdenticonImage, IdOffsetX, IdOffsetY);
      }
 
      // blit to screen and clean up
      if (CompImage != NULL) {
          if (CompImage->HasAlpha)
-             egDrawImageWithTransparency(CompImage, NULL, XPos, YPos, CompImage->Width, CompImage->Height);
+	   egDrawImageWithTransparency(CompImage, NULL, NULL, XPos, YPos, CompImage->Width, CompImage->Height);
          else
              egDrawImage(CompImage, XPos, YPos);
          egFreeImage(CompImage);
