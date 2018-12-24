@@ -698,12 +698,24 @@ LOADER_ENTRY *InitializeLoaderEntry(IN LOADER_ENTRY *Entry) {
         NewEntry->Enabled         = TRUE;
         NewEntry->UseGraphicsMode = FALSE;
         NewEntry->OSType          = 0;
+
         if (Entry != NULL) {
-            NewEntry->LoaderPath      = (Entry->LoaderPath) ? StrDuplicate(Entry->LoaderPath) : NULL;
-            NewEntry->Volume          = Entry->Volume;
-            NewEntry->UseGraphicsMode = Entry->UseGraphicsMode;
-            NewEntry->LoadOptions     = (Entry->LoadOptions) ? StrDuplicate(Entry->LoadOptions) : NULL;
-            NewEntry->InitrdPath      = (Entry->InitrdPath) ? StrDuplicate(Entry->InitrdPath) : NULL;
+	  //we share the memory from the individual entries, but not the
+	  //list itself this is because we are doing reallocates when we
+	  //add new entries, (in AddListElement) so we don't want do a
+	  //reallocate of size X in the subentry and size Y in the main
+	  //entry.
+	  NewEntry->HashFiles       = AllocatePool((sizeof(CHAR16 *) * Entry->HashFilesCount));
+	  if(NewEntry->HashFiles != NULL) {
+	    CopyMem(NewEntry->HashFiles, Entry->HashFiles, sizeof(CHAR16 *) * Entry->HashFilesCount);
+	    NewEntry->HashFilesCount = Entry->HashFilesCount;
+	  }
+	
+	  NewEntry->LoaderPath      = (Entry->LoaderPath) ? StrDuplicate(Entry->LoaderPath) : NULL;
+	  NewEntry->Volume          = Entry->Volume;
+	  NewEntry->UseGraphicsMode = Entry->UseGraphicsMode;
+	  NewEntry->LoadOptions     = (Entry->LoadOptions) ? StrDuplicate(Entry->LoadOptions) : NULL;
+	  NewEntry->InitrdPath      = (Entry->InitrdPath) ? StrDuplicate(Entry->InitrdPath) : NULL;
         }
     } // if
     return (NewEntry);

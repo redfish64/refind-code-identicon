@@ -156,6 +156,16 @@ simple_file_read_all(EFI_FILE *file, UINTN *size, void **buffer)
    return efi_status;
 }
 
+EFI_STATUS
+simple_file_read_bytes(EFI_FILE *file, UINTN *size, void **buffer)
+{
+   EFI_STATUS efi_status;
+
+   efi_status = uefi_call_wrapper(file->Read, 3, file, size, *buffer);
+
+   return efi_status;
+}
+
 void
 simple_file_close(EFI_FILE *file)
 {

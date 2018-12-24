@@ -151,6 +151,12 @@ BOOLEAN egSetTextMode(UINT32 RequestedMode);
 EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);
 EG_IMAGE * egDecodeJPEG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);
 
+/**
+ * Draw an identicon. Only up to the first 32 characters are used (enough to cover sha256).
+ */
+EG_IMAGE *egDrawIdenticon(IN UINTN IconSize, unsigned char *hash);
+
+
 #endif /* __LIBEG_LIBEG_H__ */
 
 /* EOF */

@@ -34,7 +34,7 @@ LOCAL_GNUEFI_CFLAGS  = -I$(SRCDIR) -I$(SRCDIR)/../include \
                        -I$(SRCDIR)/../libeg -I$(SRCDIR)/../mok
 LOCAL_LDFLAGS   = -L$(SRCDIR)/../libeg/ -L$(SRCDIR)/../mok/ \
                   -L$(SRCDIR)/../EfiLib/
-LOCAL_LIBS      = -leg -lmok -lEfiLib
+LOCAL_LIBS      = -leg -lmok -lEfiLib -lidenticon-c
 
 OBJS            = main.o mystrings.o apple.o line_edit.o config.o menu.o pointer.o \
                   screen.o icns.o gpt.o crc32.o lib.o driver_support.o \

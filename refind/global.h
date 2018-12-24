@@ -277,13 +277,14 @@ typedef struct _refit_menu_entry {
    CHAR16      ShortcutLetter;
    EG_IMAGE    *Image;
    EG_IMAGE    *BadgeImage;
+   EG_IMAGE    *IdenticonImage;
    struct _refit_menu_screen *SubScreen;
 } REFIT_MENU_ENTRY;
 
 typedef struct _refit_menu_screen {
    CHAR16      *Title;
    EG_IMAGE    *TitleImage;
-   UINTN       InfoLineCount;
+    UINTN       InfoLineCount;
    CHAR16      **InfoLines;
    UINTN       EntryCount;     // total number of entries registered
    REFIT_MENU_ENTRY **Entries;
@@ -304,6 +305,9 @@ typedef struct {
    CHAR16           *InitrdPath; // Linux stub loader only
    CHAR8            OSType;
    UINTN            DiscoveryType;
+   CHAR16           **HashFiles; //files to be hashed as a list of strings. Supports globs (ie. /x/*txt)
+   UINTN            HashFilesCount;
+   CHAR8            *Hash;  //hash of files to be hashed, null terminated. NULL if hashing not enabled.
 } LOADER_ENTRY;
 
 typedef struct {
@@ -312,6 +316,7 @@ typedef struct {
    BDS_COMMON_OPTION *BdsOption;
    CHAR16            *LoadOptions;
    BOOLEAN           Enabled;
+   CHAR8             *ExecHash; //hash of all files in the same directory, and load options, may be null
 } LEGACY_ENTRY;
 
 typedef struct {

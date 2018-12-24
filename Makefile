@@ -7,7 +7,7 @@
 
 include Make.common
 
-SHELL=/bin/bash
+SHELL=/usr/bin/env bash
 LOADER_DIR=refind
 FS_DIR=filesystems
 LIBEG_DIR=libeg
