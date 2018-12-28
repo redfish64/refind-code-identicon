@@ -589,7 +589,7 @@ VOID BltImageCompositeBadgeIdenticon(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopIma
      // place the badge image
      if (BadgeImage != NULL && CompImage != NULL && (BadgeImage->Width + 8) < CompWidth && (BadgeImage->Height + 8) < CompHeight) {
        UINTN BadgeOffsetX = OffsetX + CompWidth  - 8 - BadgeImage->Width;
-       UINTN BadgeOffsetY = OffsetY + CompWidth  - 8 - BadgeImage->Width;
+       UINTN BadgeOffsetY = OffsetY + CompWidth  - 8 - BadgeImage->Height;
        egComposeImage(CompImage, BadgeImage, BadgeOffsetX, BadgeOffsetY);
      }
 

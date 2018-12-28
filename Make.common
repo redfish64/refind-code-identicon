@@ -160,7 +160,7 @@ ifeq ($(ARCH), aarch64)
 endif
 
 # GNU-EFI compilation path uses .o files for compiled object code
-%.o: %.c
+%.o: %.c #%.cpp
 	$(CC) $(CFLAGS) $(ARCH_CFLAGS) $(GNUEFI_CFLAGS) $(LOCAL_GNUEFI_CFLAGS) \
 	      -D__MAKEWITH_GNUEFI -c $< -o $@
 

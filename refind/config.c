@@ -56,6 +56,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
 #include "global.h"
 #include "lib.h"
 #include "icns.h"
@@ -985,10 +986,11 @@ VOID GenerateHash(LOADER_ENTRY *Entry)
   //if(HashFilesCount != 0) {
     MyFreePool(Entry->Hash);
     Entry->Hash = AllocateZeroPool(32 * sizeof(unsigned char));
-    if(Entry->Hash != NULL)
+    if(Entry->Hash != NULL) {
       CopyMem(Entry->Hash, fooHack, 32 * sizeof(unsigned char));
-    Entry->Hash[0] = counter++;
-    Entry->HashLength = 32;
+      Entry->Hash[0] = counter++;
+      Entry->HashLength = 32;
+    }
       //}
     
 }
@@ -999,10 +1001,7 @@ VOID GenerateIdenticons(LOADER_ENTRY *Entry)
     return;
   
   egFreeImage(Entry->me.IdenticonImage);
-  Entry->me.Image = egDrawIdenticon(GlobalConfig.IconSizes[ICON_SIZE_BIG],Entry->HashLength,Entry->Hash);
-  if (Entry->me.Image == NULL) {
-    Entry->me.Image = DummyImage(GlobalConfig.IconSizes[ICON_SIZE_BIG]);
-  }
+  Entry->me.IdenticonImage = egDrawIdenticon(GlobalConfig.IconSizes[ICON_SIZE_BADGE],Entry->HashLength,Entry->Hash);
 }
 
 // Read the user-configured menu entries from refind.conf and add or delete
@@ -1031,8 +1030,9 @@ VOID ScanUserConfigured(CHAR16 *FileName)
             if (Entry->Enabled) {
                if (Entry->me.SubScreen == NULL)
                   GenerateSubScreen(Entry, Volume, TRUE);
-	       GenerateIdenticons(Entry);
                AddPreparedLoaderEntry(Entry);
+	       GenerateHash(Entry);
+	       GenerateIdenticons(Entry);
             } else {
                MyFreePool(Entry);
             } // if/else
