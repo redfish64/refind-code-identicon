@@ -853,10 +853,10 @@ static VOID AddSubmenu(LOADER_ENTRY *Entry, REFIT_FILE *File, REFIT_VOLUME *Volu
       } else if (MyStriCmp(TokenList[0], L"add_options") && (TokenCount > 1)) {
          MergeStrings(&SubEntry->LoadOptions, TokenList[1], L' ');
 
-      } else if (MyStriCmp(TokenList[0], L"hashedfiles") && (TokenCount > 1)) {
-	//any hashedfiles entry in a submenuitem is added to those in the parent
+      } else if (MyStriCmp(TokenList[0], L"hashfiles") && (TokenCount > 1)) {
+	//any hashfiles entry in a submenuitem is added to those in the parent
 	for(int i = 1; i < TokenCount; i++)
-	  AddListElement((VOID ***)&(SubEntry->HashFiles),&(SubEntry->HashFilesCount),(VOID *)StrDuplicate(TokenList[i]));
+	  AddListElement((VOID ***)&(SubEntry->HashGlobs),&(SubEntry->HashGlobsCount),(VOID *)StrDuplicate(TokenList[i]));
       } else if (MyStriCmp(TokenList[0], L"graphics") && (TokenCount > 1)) {
          SubEntry->UseGraphicsMode = MyStriCmp(TokenList[1], L"on");
 
@@ -942,7 +942,7 @@ static LOADER_ENTRY * AddStanzaEntries(REFIT_FILE *File, REFIT_VOLUME *Volume, C
          if (TokenCount > 1) {
             Entry->OSType = TokenList[1][0];
          }
-      } else if (MyStriCmp(TokenList[0], L"hashedfiles") && (TokenCount > 1)) {
+      } else if (MyStriCmp(TokenList[0], L"hashfiles") && (TokenCount > 1)) {
 	//we allow for multiple lines or a single line with multiple entries
 	for(int i = 1; i < TokenCount; i++)
 	  AddListElement((VOID ***)&(Entry->HashFiles),&(Entry->HashFilesCount),(VOID *)StrDuplicate(TokenList[i]));
@@ -976,33 +976,6 @@ static LOADER_ENTRY * AddStanzaEntries(REFIT_FILE *File, REFIT_VOLUME *Volume, C
    return(Entry);
 } // static VOID AddStanzaEntries()
 
-static unsigned char *fooHack = (unsigned char *)"73cb3858a687a8494ca332305301628x";
-
-static unsigned char counter = 'a';
-
-VOID GenerateHash(LOADER_ENTRY *Entry)
-{
-  //TODO FIXME
-  //if(HashFilesCount != 0) {
-    MyFreePool(Entry->Hash);
-    Entry->Hash = AllocateZeroPool(32 * sizeof(unsigned char));
-    if(Entry->Hash != NULL) {
-      CopyMem(Entry->Hash, fooHack, 32 * sizeof(unsigned char));
-      Entry->Hash[0] = counter++;
-      Entry->HashLength = 32;
-    }
-      //}
-    
-}
-
-VOID GenerateIdenticons(LOADER_ENTRY *Entry)
-{
-  if(Entry->Hash == NULL)
-    return;
-  
-  egFreeImage(Entry->me.IdenticonImage);
-  Entry->me.IdenticonImage = egDrawIdenticon(GlobalConfig.IconSizes[ICON_SIZE_BADGE],Entry->HashLength,Entry->Hash);
-}
 
 // Read the user-configured menu entries from refind.conf and add or delete
 // entries based on the contents of that file....
@@ -1031,8 +1004,6 @@ VOID ScanUserConfigured(CHAR16 *FileName)
                if (Entry->me.SubScreen == NULL)
                   GenerateSubScreen(Entry, Volume, TRUE);
                AddPreparedLoaderEntry(Entry);
-	       GenerateHash(Entry);
-	       GenerateIdenticons(Entry);
             } else {
                MyFreePool(Entry);
             } // if/else

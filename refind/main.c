@@ -2197,9 +2197,35 @@ VOID AdjustDefaultSelection() {
         } // if
         MyFreePool(Element);
     } // while
+    
     MyFreePool(GlobalConfig.DefaultSelection);
     GlobalConfig.DefaultSelection = NewCommaDelimited;
 } // AdjustDefaultSelection()
+
+
+
+VOID GenerateIdenticon(LOADER_ENTRY *Entry)
+{
+  if(Entry->Hash == NULL)
+    return;
+  
+  egFreeImage(Entry->me.IdenticonImage);
+  Entry->me.IdenticonImage = egDrawIdenticon(GlobalConfig.IconSizes[ICON_SIZE_BADGE],Entry->HashLength,Entry->Hash);
+}
+
+VOID GenerateIdenticonsForMainMenu()
+{
+  for (int i = 0; i < MainMenu.EntryCount; i++) {
+
+    //the entries are all cast as REFIT_MENU_ENTRY structures. Some of them are actually
+    //LOADER_ENTRY structures, which is what we need, and are identified by "Tag"
+    if(MainMenu.Entries[i]->Tag != TAG_LOADER)
+      continue;
+    
+    GenerateHash((LOADER_ENTRY *)MainMenu.Entries[i]);
+    GenerateIdenticon((LOADER_ENTRY *)MainMenu.Entries[i]);
+  }
+}
 
 //
 // main entry point
@@ -2275,6 +2301,8 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
     if (GlobalConfig.ShutdownAfterTimeout)
         MainMenu.TimeoutText = L"Shutdown";
 
+    GenerateIdenticonsForMainMenu();
+    
     while (MainLoopRunning) {
         MenuExit = RunMainMenu(&MainMenu, &SelectionName, &ChosenEntry);
 
@@ -2282,6 +2310,7 @@ efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
         if (MenuExit == MENU_EXIT_ESCAPE) {
             MenuExit = 0;
             RescanAll(TRUE);
+	    GenerateIdenticonsForMainMenu();
             continue;
         }
 

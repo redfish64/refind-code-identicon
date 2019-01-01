@@ -306,9 +306,13 @@ typedef struct {
    CHAR16           *InitrdPath; // Linux stub loader only
    CHAR8            OSType;
    UINTN            DiscoveryType;
-   CHAR16           **HashFiles; //files to be hashed as a list of strings. Supports globs (ie. /x/*txt)
-   UINTN            HashFilesCount;
-   CHAR8            *Hash;  //hash of files to be hashed, null terminated. NULL if hashing not enabled.
+   CHAR16           **HashGlobs; //files to be hashed and displayed as
+				 //an identicon as a list of
+				 //strings. Supports globs
+				 //(ie. /x/*txt)
+   UINTN            HashGlobsCount;
+   CHAR8            *Hash;  //identicon hash, null terminated. NULL if
+			    //hashing not enabled.
    UINTN            HashLength;  
 } LOADER_ENTRY;
 
