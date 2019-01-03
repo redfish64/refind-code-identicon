@@ -856,7 +856,7 @@ static VOID AddSubmenu(LOADER_ENTRY *Entry, REFIT_FILE *File, REFIT_VOLUME *Volu
       } else if (MyStriCmp(TokenList[0], L"hashfiles") && (TokenCount > 1)) {
 	//any hashfiles entry in a submenuitem is added to those in the parent
 	for(int i = 1; i < TokenCount; i++)
-	  AddListElement((VOID ***)&(SubEntry->HashGlobs),&(SubEntry->HashGlobsCount),(VOID *)StrDuplicate(TokenList[i]));
+	  AddListElement((VOID ***)&(SubEntry->HashPaths),&(SubEntry->HashPathsCount),(VOID *)StrDuplicate(TokenList[i]));
       } else if (MyStriCmp(TokenList[0], L"graphics") && (TokenCount > 1)) {
          SubEntry->UseGraphicsMode = MyStriCmp(TokenList[1], L"on");
 
@@ -945,7 +945,7 @@ static LOADER_ENTRY * AddStanzaEntries(REFIT_FILE *File, REFIT_VOLUME *Volume, C
       } else if (MyStriCmp(TokenList[0], L"hashfiles") && (TokenCount > 1)) {
 	//we allow for multiple lines or a single line with multiple entries
 	for(int i = 1; i < TokenCount; i++)
-	  AddListElement((VOID ***)&(Entry->HashFiles),&(Entry->HashFilesCount),(VOID *)StrDuplicate(TokenList[i]));
+	  AddListElement((VOID ***)&(Entry->HashPaths),&(Entry->HashPathsCount),(VOID *)StrDuplicate(TokenList[i]));
       } else if (MyStriCmp(TokenList[0], L"graphics") && (TokenCount > 1)) {
          Entry->UseGraphicsMode = MyStriCmp(TokenList[1], L"on");
 

@@ -69,6 +69,7 @@
 #include "mystrings.h"
 #include "security_policy.h"
 #include "driver_support.h"
+#include "hash.h"
 #include "../include/Handle.h"
 #include "../include/refit_call_wrapper.h"
 #include "../include/version.h"
@@ -706,10 +707,12 @@ LOADER_ENTRY *InitializeLoaderEntry(IN LOADER_ENTRY *Entry) {
 	  //add new entries, (in AddListElement) so we don't want do a
 	  //reallocate of size X in the subentry and size Y in the main
 	  //entry.
-	  NewEntry->HashFiles       = AllocatePool((sizeof(CHAR16 *) * Entry->HashFilesCount));
-	  if(NewEntry->HashFiles != NULL) {
-	    CopyMem(NewEntry->HashFiles, Entry->HashFiles, sizeof(CHAR16 *) * Entry->HashFilesCount);
-	    NewEntry->HashFilesCount = Entry->HashFilesCount;
+	  if(Entry->HashPaths != NULL) {
+	    NewEntry->HashPaths       = AllocatePool((sizeof(CHAR16 *) * Entry->HashPathsCount));
+	    if(NewEntry->HashPaths != NULL) {
+	      CopyMem(NewEntry->HashPaths, Entry->HashPaths, sizeof(CHAR16 *) * Entry->HashPathsCount);
+	      NewEntry->HashPathsCount = Entry->HashPathsCount;
+	    }
 	  }
 	
 	  NewEntry->LoaderPath      = (Entry->LoaderPath) ? StrDuplicate(Entry->LoaderPath) : NULL;
@@ -2210,7 +2213,8 @@ VOID GenerateIdenticon(LOADER_ENTRY *Entry)
     return;
   
   egFreeImage(Entry->me.IdenticonImage);
-  Entry->me.IdenticonImage = egDrawIdenticon(GlobalConfig.IconSizes[ICON_SIZE_BADGE],Entry->HashLength,Entry->Hash);
+
+  Entry->me.IdenticonImage = egDrawIdenticon(GlobalConfig.IconSizes[ICON_SIZE_IDENTICON],Entry->HashLength,Entry->Hash);
 }
 
 VOID GenerateIdenticonsForMainMenu()
@@ -2221,6 +2225,7 @@ VOID GenerateIdenticonsForMainMenu()
     //LOADER_ENTRY structures, which is what we need, and are identified by "Tag"
     if(MainMenu.Entries[i]->Tag != TAG_LOADER)
       continue;
+  
     
     GenerateHash((LOADER_ENTRY *)MainMenu.Entries[i]);
     GenerateIdenticon((LOADER_ENTRY *)MainMenu.Entries[i]);

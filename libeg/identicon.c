@@ -3,13 +3,14 @@
 
 static VOID drawRectangle(EG_IMAGE img, UINTN x, UINTN y, UINTN width, UINTN height,
 			   EG_PIXEL color) {
+
   for (int i = x; i < x + width; i++) {
     if(i >= img.Width) break;
 
     for (int j = y; j < y+height; j++) {
       if (j >= img.Height) break;
 
-      img.PixelData[img.Width * j + i] = color;
+      img.PixelData[img.Height * j + i] = color;
     }
   }
 }
@@ -86,6 +87,7 @@ EG_IMAGE *egDrawIdenticon(IN UINTN IconSize, UINTN hashlen, unsigned char *hash)
       //we squish into the dimensions provided
       drawGrid(*Image, x, y, 16,16,w/2,h,0,0,color);
       drawGrid(*Image, 15-x, y, 16,16,w-w/2,h,w/2,0,color);
+
     }
   }
 
